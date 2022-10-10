@@ -1,6 +1,6 @@
 {
   "name": "posthtml-custom-tag",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Find template path by custom tag name",
   "license": "MIT",
   "repository": "thewebartisan7/posthtml-custom-tag",
