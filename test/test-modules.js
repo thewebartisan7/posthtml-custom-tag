@@ -38,7 +38,7 @@ test('Must output result by using plugin via options', async t => {
   const expected = `<div><button>Submit</button></div>`;
 
   const html = await posthtml([
-    customTag({root: './', roots: 'test/templates/modules/', attribute: 'href', replaceTagNameWith: 'module', plugins: [posthtmlModules({root: './'})]})
+    customTag({root: './', roots: 'test/templates/modules/', attribute: 'href', replaceTagNameWith: 'module', plugins: posthtmlModules({root: './'})})
   ])
     .process(actual)
     .then(result => clean(result.html));
@@ -184,4 +184,39 @@ test('Must fail when namespace path is not found with fallback root', async t =>
   await t.throwsAsync(async () => posthtml([
     customTag({root: './', roots: 'test/templates/', attribute: 'href', replaceTagNameWith: 'module', namespaceFallback: true, absolute: true, namespaces: {name: 'empty-namespace', root: './test/templates/empty-namespace/'}})
   ]).process(actual));
+});
+
+test('Must set custom attribute href and replace custom tag name', async t => {
+  const actual = `<div><x-button>Submit</x-button></div>`;
+  let expected = `<div><component src="test/templates/modules/button.html">Submit</component></div>`;
+
+  let html = await posthtml([
+    customTag({root: './', roots: 'test/templates/modules/', attribute: 'src', absolute: true, replaceTagNameWith: 'component'})
+  ])
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+
+  expected = `<div><button>Submit</button></div>`;
+  html = await posthtml([
+    posthtmlModules({root: './', attribute: 'src', tag: 'component'})
+  ])
+    .process(html)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
+});
+
+test(`Must auto initialize via options`, async t => {
+  const actual = `<div><x-button>Submit</x-button></div>`;
+  const expected = `<div><button>Submit</button></div>`;
+
+  const html = await posthtml([
+    customTag({root: './', roots: 'test/templates/modules/', modules: {root: './'}})
+  ])
+    .process(actual)
+    .then(result => clean(result.html));
+
+  t.is(html, expected);
 });
